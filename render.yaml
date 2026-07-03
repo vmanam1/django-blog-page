@@ -17,11 +17,5 @@ services:
         value: django-blog.onrender.com
       - key: DJANGO_CSRF_TRUSTED_ORIGINS
         value: https://django-blog.onrender.com
-      - key: AWS_ACCESS_KEY_ID
-        sync: false
-      - key: AWS_SECRET_ACCESS_KEY
-        sync: false
-      - key: AWS_STORAGE_BUCKET_NAME
-        sync: false
       - key: AWS_S3_REGION_NAME
         value: eu-north-1
