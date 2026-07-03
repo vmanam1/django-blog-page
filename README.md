@@ -81,7 +81,7 @@ to send real email. Never commit SMTP or cloud credentials.
 ### 1. Clone and enter the project
 
 ```bash
-git clone https://github.com/VishalManam/django-blog-page.git
+git clone https://github.com/vmanam1/django-blog-page.git
 cd django-blog-page
 ```
 
