@@ -167,8 +167,8 @@ requirements, post creation, post ownership permissions, deletion, and POST-only
 ## Deployment on Render
 
 `render.yaml` declares a free web service that connects to an external PostgreSQL database.
-`build.sh` installs dependencies and collects static assets; the pre-deploy command applies
-migrations; Gunicorn serves Django; and Render monitors `/health/`.
+`build.sh` installs dependencies, collects static assets, and applies database migrations;
+Gunicorn serves Django, and Render monitors `/health/`.
 
 1. Push the repository to GitHub.
 2. In Render, create a new Blueprint and select this repository.

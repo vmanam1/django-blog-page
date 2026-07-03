@@ -4,7 +4,6 @@ services:
     runtime: python
     plan: free
     buildCommand: bash build.sh
-    preDeployCommand: python manage.py migrate
     startCommand: gunicorn django_project.wsgi:application
     healthCheckPath: /health/
     envVars:
