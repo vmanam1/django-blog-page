@@ -1,5 +1,10 @@
 # Django Blogging Platform
 
+[![CI](https://github.com/vmanam1/django-blog-page/actions/workflows/ci.yml/badge.svg)](https://github.com/vmanam1/django-blog-page/actions/workflows/ci.yml)
+[![Live](https://img.shields.io/badge/live-Render-46E3B7)](https://django-blog-bqma.onrender.com/)
+
+**Live application:** [https://django-blog-bqma.onrender.com/](https://django-blog-bqma.onrender.com/)
+
 A server-rendered blogging application built with Django. Users can register, manage a
 profile, publish posts, browse posts by author, and update or delete only their own content.
 
@@ -22,6 +27,26 @@ integration, dependency management, and production deployment.
 
 Email addresses are currently validated for format and uniqueness. Account ownership
 verification through an emailed activation link is not yet implemented.
+
+## Modernization completed
+
+The original college project was upgraded without replacing its core Django architecture:
+
+- Removed committed credentials, the local SQLite database, uploaded user files, and Python
+  bytecode from the published repository.
+- Rebuilt Git history as a clean public portfolio snapshot under `vmanam1`.
+- Upgraded Django 4.2 to Django 5.2 LTS and Python 3.12-compatible dependencies.
+- Replaced hardcoded settings with environment variables and safe development defaults.
+- Added PostgreSQL support through `DATABASE_URL`, while retaining SQLite locally.
+- Upgraded Bootstrap 4 to Bootstrap 5 and made logout a CSRF-protected POST action.
+- Fixed profile signal registration, duplicate-email handling, URL consistency, and production
+  host/port detection.
+- Added production security settings, WhiteNoise static assets, Gunicorn, and an HTTP health
+  endpoint.
+- Added 11 tests, Ruff linting/formatting, and GitHub Actions continuous integration.
+- Added a free-tier deployment using Render for Django and Neon for PostgreSQL.
+- Added optional Brevo SMTP configuration for password-reset delivery and optional Amazon S3
+  storage for persistent profile images.
 
 ## Technology
 
@@ -55,9 +80,9 @@ one Django `User`. Deleting a user cascades to that user's posts.
 relationship with a user. A post-save signal creates a profile whenever a user is created.
 
 ```text
-User 1 ───── 1 Profile
-  │
-  └───── * Post
+User 1 ----- 1 Profile
+  |
+  +----- * Post
 ```
 
 ### Authorization
@@ -166,6 +191,16 @@ requirements, post creation, post ownership permissions, deletion, and POST-only
 
 ## Deployment on Render
 
+The live deployment is available at
+[django-blog-bqma.onrender.com](https://django-blog-bqma.onrender.com/).
+
+```text
+Browser -> Render free web service -> Django/Gunicorn -> Neon PostgreSQL
+                         |
+                         +-> WhiteNoise static files
+                         +-> optional Brevo SMTP / Amazon S3
+```
+
 `render.yaml` declares a free web service that connects to an external PostgreSQL database.
 `build.sh` installs dependencies, collects static assets, and applies database migrations;
 Gunicorn serves Django, and Render monitors `/health/`.
@@ -175,14 +210,18 @@ Gunicorn serves Django, and Render monitors `/health/`.
 3. Create a free Neon PostgreSQL database and copy its connection string.
 4. Review the generated Render web service and enter that connection string as the secret
    `DATABASE_URL` value. Never commit it to Git.
-5. Change the service name/domain in `render.yaml` if Render assigns another name, then update
-   `DJANGO_ALLOWED_HOSTS` and `DJANGO_CSRF_TRUSTED_ORIGINS`.
+5. Render exposes its assigned hostname through `RENDER_EXTERNAL_HOSTNAME`; Django adds that
+   hostname and its HTTPS origin to the security allowlists automatically.
 6. For persistent profile images, create a private IAM user and S3 bucket, then set the three
    `AWS_*` secret variables in Render. Without S3, uploaded files on an ephemeral web-service
    filesystem will not be durable.
 7. Configure SMTP variables if password-reset emails should be delivered externally.
 
 Do not use the development SQLite database in production and do not commit `.env`.
+
+Render's free instance can spin down while inactive, so the first request after inactivity can
+take approximately a minute. Neon can also suspend idle database compute and wake it on demand.
+Uploaded profile images are not durable on Render until S3 is configured.
 
 ## Screenshots
 
