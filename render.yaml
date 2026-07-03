@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: bash build.sh
-    startCommand: gunicorn django_project.wsgi:application
+    startCommand: gunicorn django_project.wsgi:application --bind 0.0.0.0:$PORT
     healthCheckPath: /health/
     envVars:
       - key: DATABASE_URL
@@ -13,9 +13,5 @@ services:
         generateValue: true
       - key: DJANGO_DEBUG
         value: "False"
-      - key: DJANGO_ALLOWED_HOSTS
-        value: django-blog.onrender.com
-      - key: DJANGO_CSRF_TRUSTED_ORIGINS
-        value: https://django-blog.onrender.com
       - key: AWS_S3_REGION_NAME
         value: eu-north-1
