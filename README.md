@@ -166,19 +166,21 @@ requirements, post creation, post ownership permissions, deletion, and POST-only
 
 ## Deployment on Render
 
-`render.yaml` declares a web service and PostgreSQL database. `build.sh` installs dependencies
-and collects static assets; the pre-deploy command applies migrations; Gunicorn serves Django;
-and Render monitors `/health/`.
+`render.yaml` declares a free web service that connects to an external PostgreSQL database.
+`build.sh` installs dependencies and collects static assets; the pre-deploy command applies
+migrations; Gunicorn serves Django; and Render monitors `/health/`.
 
 1. Push the repository to GitHub.
 2. In Render, create a new Blueprint and select this repository.
-3. Review the generated web service and database.
-4. Change the service name/domain in `render.yaml` if Render assigns another name, then update
+3. Create a free Neon PostgreSQL database and copy its connection string.
+4. Review the generated Render web service and enter that connection string as the secret
+   `DATABASE_URL` value. Never commit it to Git.
+5. Change the service name/domain in `render.yaml` if Render assigns another name, then update
    `DJANGO_ALLOWED_HOSTS` and `DJANGO_CSRF_TRUSTED_ORIGINS`.
-5. For persistent profile images, create a private IAM user and S3 bucket, then set the three
+6. For persistent profile images, create a private IAM user and S3 bucket, then set the three
    `AWS_*` secret variables in Render. Without S3, uploaded files on an ephemeral web-service
    filesystem will not be durable.
-6. Configure SMTP variables if password-reset emails should be delivered externally.
+7. Configure SMTP variables if password-reset emails should be delivered externally.
 
 Do not use the development SQLite database in production and do not commit `.env`.
 
