@@ -2,6 +2,7 @@ services:
   - type: web
     name: django-blog
     runtime: python
+    plan: free
     buildCommand: bash build.sh
     preDeployCommand: python manage.py migrate
     startCommand: gunicorn django_project.wsgi:application
