@@ -41,7 +41,7 @@ urlpatterns = [
     ),
     path(
         "password-reset/",
-        auth_views.PasswordResetView.as_view(template_name="users/password_reset.html"),
+        user_views.SafePasswordResetView.as_view(),
         name="password_reset",
     ),
     path(
@@ -66,5 +66,7 @@ urlpatterns = [
     path("", include("blog.urls")),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Always serve media files through Django.
+# In production without S3, Render's ephemeral filesystem still needs
+# Django to serve uploaded media and the default profile image.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

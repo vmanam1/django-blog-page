@@ -1,8 +1,37 @@
+import logging
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import PasswordResetView
 from django.shortcuts import redirect, render
 
 from .forms import ProfileUpdateForm, UserRegisterForm, UserUpdateForm
+
+logger = logging.getLogger(__name__)
+
+
+class SafePasswordResetView(PasswordResetView):
+    """PasswordResetView that catches email-sending errors gracefully.
+
+    When SMTP credentials are missing or invalid, Django's default view
+    raises an unhandled exception and returns a 500 error.  This subclass
+    catches those errors and re-renders the form with a user-friendly
+    message instead.
+    """
+
+    template_name = "users/password_reset.html"
+
+    def form_valid(self, form):
+        try:
+            return super().form_valid(form)
+        except Exception:
+            logger.exception("Failed to send password-reset email")
+            messages.error(
+                self.request,
+                "We were unable to send the password-reset email. "
+                "Please try again later or contact the site administrator.",
+            )
+            return self.form_invalid(form)
 
 
 def register(request):
